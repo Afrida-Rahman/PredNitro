@@ -27,7 +27,7 @@ The M-iterations of k-fold cross-validation were performed according to the foll
 
   Step 7: Merge the prediction outputs and measure the performance.
 
-  Step 8: Repeat steps 1 to 7 for 10 times.
+  Step 8: Repeat steps 1 to 7 for M times.
 
   Step 9: Measure the average performance of M repetitions with corresponding standard deviations.
 
