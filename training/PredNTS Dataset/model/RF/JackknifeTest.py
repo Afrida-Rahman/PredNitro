@@ -5,14 +5,14 @@ import sklearn.metrics
 from sklearn.metrics import matthews_corrcoef
 from sklearn.metrics import accuracy_score
 import imblearn
-from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
 import os
 
 
-absolute_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..\\'))
+absolute_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..\\..\\'))
 feature_path = absolute_path + '\\feature_extract\\'
 cross_val_path = absolute_path + '\\fold_index\\'
-result_path = absolute_path + '\\result\\'
+result_path = absolute_path + '\\result\\RF\\'
 
 dataset= pd.read_csv(feature_path+'\\Prob_Feature.csv', header = None)
 X = dataset.iloc[:, :].values
@@ -27,12 +27,7 @@ for i in range(1191):
 y= np.array(y, dtype=np.int64)
 y_train= y
 
-wap = 2382/(2*1191)
-wan = 2382/(2*1191)
-weight = {-1:wan, 1:wap}  
-
-classifier= SVC(C=1, kernel='rbf', gamma=1/X_train.shape[1], class_weight = weight, cache_size=500,  random_state = 0)
-#classifier = SVC()
+classifier = RandomForestClassifier()
 train_index = pd.read_csv(cross_val_path+'\\train_index_LOO.csv',header=None)
 test_index = pd.read_csv(cross_val_path+'\\test_index_LOO.csv',header=None)
 
@@ -57,7 +52,7 @@ for fold in range(train_index.shape[1]):  #### flaws here ###
     X_test_split = X_train[test_ind]
     y_test_split = y_train[test_ind]
     y_pred = classifier.predict(X_test_split)
-    y_pred_score = classifier.decision_function(X_test_split)
+    y_pred_score = classifier.predict_proba(X_test_split)[:,1]
     
     y_test_split = y_test_split.reshape(y_test_split.shape[0],-1)
     y_pred_f = y_pred.reshape(y_pred.shape[0],-1)
