@@ -11,7 +11,7 @@ import sklearn.metrics
 from sklearn.metrics import matthews_corrcoef
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from imblearn.metrics import specificity_score
 import csv
 import imblearn
@@ -35,8 +35,8 @@ y_train= y
 X_train=X
 
 
-train_index = pd.read_csv(cross_val_path+'\\train_index_5fold.csv',header=None)
-test_index = pd.read_csv(cross_val_path+'\\test_index_5fold.csv',header=None)
+train_index = pd.read_csv(cross_val_path+'\\train_index_10fold.csv',header=None)
+test_index = pd.read_csv(cross_val_path+'\\test_index_10fold.csv',header=None)
 
 
 bp=[]
@@ -57,13 +57,13 @@ for fold in range(train_index.shape[1]):
     test_ind = np.array(test_ind, dtype=np.int64)
     test_ind=np.reshape(test_ind,(len(test_ind,)))
 
-    if fold%5==0:
-        time=int(fold/5)
+    if fold%10==0:
+        time=int(fold/10)
 
     X_train_split = X_train[train_ind]
     y_train_split = y_train[train_ind]
 
-    classifier = RandomForestClassifier()
+    classifier = KNeighborsClassifier()
     classifier.fit(X_train_split, y_train_split)
     X_test_split = X_train[test_ind]
     y_test_split = y_train[test_ind]
@@ -77,15 +77,15 @@ for fold in range(train_index.shape[1]):
     y_pred_fold.append(y_pred_f)
     y_pred_score_fold.append(y_pred_score_f)
 
-    if i % 5 == 0:
+    if i % 10 == 0:
         x=0
-        y_test_time = np.concatenate([y_test_fold[x] for x in range(5)])
+        y_test_time = np.concatenate([y_test_fold[x] for x in range(10)])
         y_test_fold = []
         x=0
-        y_pred_time = np.concatenate([y_pred_fold[x] for x in range(5)])
+        y_pred_time = np.concatenate([y_pred_fold[x] for x in range(10)])
         y_pred_fold = []
         x=0
-        y_pred_score_time = np.concatenate([y_pred_score_fold[x] for x in range(5)])
+        y_pred_score_time = np.concatenate([y_pred_score_fold[x] for x in range(10)])
         y_pred_score_fold = []
 
         acc = accuracy_score(y_true = y_test_time, y_pred = y_pred_time)
@@ -106,7 +106,7 @@ for fold in range(train_index.shape[1]):
 
 
 results.insert(0, ["Accuracy", "MCC","sp","sn","auc"])
-with open(result_path+'\\prob_knn_5fold.csv', 'w', newline="") as myfile2:
+with open(result_path+'\\prob_knn_10fold.csv', 'w', newline="") as myfile2:
     wr = csv.writer(myfile2)
     wr.writerows(results)
 

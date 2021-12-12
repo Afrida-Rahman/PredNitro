@@ -11,7 +11,7 @@ import sklearn.metrics
 from sklearn.metrics import matthews_corrcoef
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from imblearn.metrics import specificity_score
 import csv
 import imblearn
@@ -63,7 +63,7 @@ for fold in range(train_index.shape[1]):
     X_train_split = X_train[train_ind]
     y_train_split = y_train[train_ind]
 
-    classifier = RandomForestClassifier()
+    classifier = KNeighborsClassifier()
     classifier.fit(X_train_split, y_train_split)
     X_test_split = X_train[test_ind]
     y_test_split = y_train[test_ind]
