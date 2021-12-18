@@ -46,6 +46,9 @@ y_test_fold=[]
 y_pred_fold=[]
 y_pred_score_fold=[]
 
+y_test_all_fold = []
+y_pred_score_all_fold = []
+
 time=0
 for fold in range(train_index.shape[1]):
 
@@ -94,6 +97,9 @@ for fold in range(train_index.shape[1]):
         sn=imblearn.metrics.sensitivity_score(y_true=y_test_time, y_pred=y_pred_time, labels=None, pos_label=1, average='binary', sample_weight=None)
         auc = sklearn.metrics.roc_auc_score(y_true = y_test_time, y_score = y_pred_score_time)
 
+        y_test_all_fold.append(y_test_time)
+        y_pred_score_all_fold.append(y_pred_score_time)
+
         curr_res = []
         curr_res.append(acc)
         curr_res.append(mcc)
@@ -110,3 +116,8 @@ with open(result_path+'\\prob_knn_5fold.csv', 'w', newline="") as myfile2:
     wr = csv.writer(myfile2)
     wr.writerows(results)
 
+
+y_test_all_fold = pd.DataFrame(np.array(y_test_all_fold).flatten())
+y_pred_score_all_fold = pd.DataFrame(np.array(y_pred_score_all_fold).flatten())
+y_test_all_fold.to_csv(result_path+"y_test_5fold.csv")
+y_pred_score_all_fold.to_csv(result_path+"y_pred_5fold.csv")
