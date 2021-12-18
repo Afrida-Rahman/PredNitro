@@ -4,31 +4,31 @@ from warnings import simplefilter
 simplefilter(action='ignore', category=FutureWarning)
 
 import numpy as np
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import pandas as pd
 import math
 import sklearn.metrics
 from sklearn.metrics import matthews_corrcoef
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_curve, auc
 from sklearn.svm import SVC
 from imblearn.metrics import specificity_score
 import csv
 import imblearn
 import os
 
-absolute_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..\\'))
+absolute_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..\\..\\'))
 feature_path = absolute_path + '\\feature_extract\\'
 cross_val_path = absolute_path + '\\fold_index\\'
-result_path = absolute_path + '\\result\\'
+result_path = absolute_path + '\\result\\SVM\\'
 
 dataset = pd.read_csv(feature_path+'\\Prob_Feature.csv', header = None)
 X = dataset.iloc[:, :].values
 y= []
 for i in range(1191):
-    y.append(1);
+    y.append(1)
 for i in range(1191):
-    y.append(-1);
+    y.append(-1)
 
 y= np.array(y, dtype=np.int64)
 y_train= y
@@ -45,13 +45,12 @@ i = 1
 y_test_fold=[]
 y_pred_fold=[]
 y_pred_score_fold=[]
+
+y_test_all_fold = []
+y_pred_score_all_fold = []
  
 C=1
 gamma=1/X_train.shape[1]
-
-wap = 2382/(2*1191)
-wan = 2382/(2*1191)
-weight = {-1:wan, 1:wap}  
 
 time=0
 for fold in range(train_index.shape[1]):  
@@ -70,7 +69,7 @@ for fold in range(train_index.shape[1]):
     X_train_split = X_train[train_ind]
     y_train_split = y_train[train_ind]
    
-    classifier = SVC(C=C, kernel='rbf', gamma=gamma, class_weight=weight, cache_size=500,  random_state = 0)
+    classifier = SVC()
     classifier.fit(X_train_split, y_train_split)    
     X_test_split = X_train[test_ind]
     y_test_split = y_train[test_ind]
@@ -99,14 +98,17 @@ for fold in range(train_index.shape[1]):
         mcc = matthews_corrcoef(y_true = y_test_time, y_pred = y_pred_time, sample_weight=None)
         sp=imblearn.metrics.specificity_score(y_true=y_test_time, y_pred=y_pred_time, labels=None, pos_label=1, average='binary', sample_weight=None)
         sn=imblearn.metrics.sensitivity_score(y_true=y_test_time, y_pred=y_pred_time, labels=None, pos_label=1, average='binary', sample_weight=None)
-        auc = sklearn.metrics.roc_auc_score(y_true = y_test_time, y_score = y_pred_score_time)
+        auc_score = sklearn.metrics.roc_auc_score(y_true = y_test_time, y_score = y_pred_score_time)
+
+        y_test_all_fold.append(y_test_time)
+        y_pred_score_all_fold.append(y_pred_score_time)
         
         curr_res = []
         curr_res.append(acc)
         curr_res.append(mcc)
         curr_res.append(sp)
         curr_res.append(sn)
-        curr_res.append(auc)
+        curr_res.append(auc_score)
         results.append(curr_res)
         print(i)
     i+=1
@@ -116,4 +118,28 @@ results.insert(0, ["Accuracy", "MCC","sp","sn","auc"])
 with open(result_path+'\\prob_libsvm_5fold.csv', 'w', newline="") as myfile2:
     wr = csv.writer(myfile2)   
     wr.writerows(results)
-    
+
+
+y_test_all_fold = np.array(y_test_all_fold).flatten()
+y_pred_score_all_fold = np.array(y_pred_score_all_fold).flatten()
+fpr, tpr, _ = roc_curve(y_true=y_test_all_fold, y_score=y_pred_score_all_fold, pos_label=1)
+roc_auc = auc(fpr, tpr)
+
+
+plt.figure()
+lw = 2
+plt.plot(
+    fpr,
+    tpr,
+    color="darkorange",
+    lw=lw,
+    label="ROC curve (area = %0.2f)" % roc_auc,
+)
+plt.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("Receiver operating characteristic example")
+plt.legend(loc="lower right")
+plt.show()
