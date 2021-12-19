@@ -9,10 +9,10 @@ from sklearn.svm import SVC
 import os
 
 
-absolute_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..\\'))
-feature_path = absolute_path + '\\feature_extract\\'
+absolute_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..\\..\\'))
+feature_path = absolute_path + '\\feature_extract'
 cross_val_path = absolute_path + '\\fold_index\\'
-result_path = absolute_path + '\\result\\'
+result_path = absolute_path + '\\result\\SVM\\'
 
 dataset= pd.read_csv(feature_path+'\\Prob_Feature.csv', header = None)
 X = dataset.iloc[:, :].values
@@ -31,7 +31,7 @@ wap = 2382/(2*1191)
 wan = 2382/(2*1191)
 weight = {-1:wan, 1:wap}  
 
-classifier= SVC(C=1, kernel='rbf', gamma=1/X_train.shape[1], class_weight = weight, cache_size=500,  random_state = 0)
+classifier= SVC()
 #classifier = SVC()
 train_index = pd.read_csv(cross_val_path+'\\train_index_LOO.csv',header=None)
 test_index = pd.read_csv(cross_val_path+'\\test_index_LOO.csv',header=None)
@@ -69,7 +69,6 @@ for fold in range(train_index.shape[1]):  #### flaws here ###
     print(i)
     i+=1
 
-
 y_test_fold = np.array(y_test_fold)
 y_pred_fold = np.array(y_pred_fold)
 y_pred_score_fold = np.array(y_pred_score_fold)
@@ -95,3 +94,5 @@ result = pd.DataFrame(result)
 print(result)
 result.to_csv(result_path+'\\prob_jacknife_libsvm.csv', header = ["Sp", "Sn", "ACC","MCC","AUC"], index=None)
 
+y_test_fold.to_csv(result_path + "y_test_jackknife.csv")
+y_pred_score_fold.to_csv(result_path + "y_pred_jackknife.csv")

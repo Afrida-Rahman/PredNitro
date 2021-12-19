@@ -90,3 +90,5 @@ result = pd.DataFrame(result)
 print(result)
 result.to_csv(result_path+'\\prob_jacknife_libsvm.csv', header = ["Sp", "Sn", "ACC","MCC","AUC"], index=None)
 
+y_test_fold.to_csv(result_path + "y_test_jackknife.csv")
+y_pred_score_fold.to_csv(result_path + "y_pred_jackknife.csv")

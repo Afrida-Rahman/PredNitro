@@ -37,6 +37,7 @@ i = 1
 y_test_fold=[]
 y_pred_fold=[]
 y_pred_score_fold=[]
+
 for fold in range(train_index.shape[1]):  #### flaws here ###
     train_ind = pd.DataFrame(train_index.iloc[:,fold].values).dropna()
     train_ind = np.array(train_ind, dtype=np.int64)
@@ -90,3 +91,5 @@ result = pd.DataFrame(result)
 print(result)
 result.to_csv(result_path+'\\prob_jacknife_libsvm.csv', header = ["Sp", "Sn", "ACC","MCC","AUC"], index=None)
 
+y_test_fold.to_csv(result_path+"y_test_jackknife.csv")
+y_pred_score_fold.to_csv(result_path+"y_pred_jackknife.csv")
