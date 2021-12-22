@@ -69,7 +69,7 @@ for fold in range(train_index.shape[1]):
     X_train_split = X_train[train_ind]
     y_train_split = y_train[train_ind]
    
-    classifier = SVC()
+    classifier = SVC(gamma='auto')
     classifier.fit(X_train_split, y_train_split)    
     X_test_split = X_train[test_ind]
     y_test_split = y_train[test_ind]
