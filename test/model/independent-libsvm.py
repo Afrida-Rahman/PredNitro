@@ -14,8 +14,8 @@ import joblib
 
 absolute_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..\\..\\'))
 feature_path_training = absolute_path + '\\training\\PredNTS Dataset\\feature_extract\\'
-feature_path_testing = absolute_path + '\\independent-test\\feature_extract\\'
-result_path = absolute_path + '\\independent-test\\result\\'
+feature_path_testing = absolute_path + '\\test\\feature_extract\\'
+result_path = absolute_path + '\\test\\result\\'
 
 
 training_dataset = pd.read_csv(feature_path_training+'\\Prob_Feature.csv', header = None)
@@ -28,30 +28,20 @@ X_test = test_dataset.iloc[:, :].values
 
 y_train= []
 for i in range(1191):
-    y_train.append(1);
+    y_train.append(1)
 for i in range(1191):
-    y_train.append(-1);
+    y_train.append(-1)
 
 y_train= np.array(y_train, dtype=np.int64)
 
 y_test= []
 for i in range(203):
-    y_test.append(1);
+    y_test.append(1)
 for i in range(1022):
-    y_test.append(-1);
+    y_test.append(-1)
 
 y_test= np.array(y_test, dtype=np.int64)
-
-C=1
-gamma=1/X_train.shape[1]
-
-
-wap = 2382/(2*1191)
-wan = 2382/(2*1191)
-weight = {-1:wan, 1:wap}  
-
-
-classifier = SVC(C=C, kernel='rbf', gamma=gamma, class_weight=weight, cache_size=500,  random_state = 0)
+classifier = SVC(gamma='auto')
 print('Starting to train!')
 classifier.fit(X_train, y_train)
 print('Training finished! Saving model weights...')
@@ -80,4 +70,9 @@ results = np.array([acc, mcc, sp, sn, auc])
 results = pd.DataFrame(results)
 results = results.T
 print(results)
-results.to_csv(result_path+'\\ind-test-result-libsvm.csv', header=['ACC','MCC','Sp','Sn','AUC'], index=None)    
+results.to_csv(result_path+'\\ind-test-result-libsvm.csv', header=['ACC','MCC','Sp','Sn','AUC'], index=None)
+
+y_test_all_fold = pd.DataFrame(np.array(y_test).flatten())
+y_pred_score_all_fold = pd.DataFrame(np.array(y_pred_score).flatten())
+y_test_all_fold.to_csv(result_path+"y_test.csv")
+y_pred_score_all_fold.to_csv(result_path+"y_pred_score.csv")
