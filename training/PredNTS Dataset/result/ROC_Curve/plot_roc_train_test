@@ -21,15 +21,14 @@ roc_auc3 = auc(fpr3, tpr3)
 
 
 plt.figure()
-lw = 2
-plt.plot(fpr2,tpr2, color="navy",lw=lw, linestyle=":", label="10-Fold (AUC = %0.4f)" % roc_auc2)
-plt.plot(fpr3,tpr3, color="red",lw=lw, linestyle="-.", label="Independent Test (AUC = %0.4f)" % roc_auc3)
+plt.plot(fpr2,tpr2, color="navy",lw=4, linestyle=":", label="10-fold cross-validation (AUC = %0.4f)" % roc_auc2)
+plt.plot(fpr3,tpr3, color="red",lw=4, linestyle="-", label="Independent test (AUC = %0.4f)" % roc_auc3)
 
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.0])
 plt.xlabel("1 - Specificity")
 plt.ylabel("Sensitivity")
-plt.title("ROC curve of classifiers for 5 fold")
+plt.title("ROC curve of PredNitro")
 plt.legend(loc="lower right")
-plt.show()
-# plt.savefig(fname=result_path + "\\ROC_5fold.eps")
+# plt.show()
+plt.savefig(fname=training_result_path + "\\ROC_Curve\\ROC_PredNitro.eps")
