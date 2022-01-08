@@ -30,7 +30,7 @@ plt.plot(fpr2,tpr2, color="navy",lw=lw, linestyle=":", label="RF (area = %0.4f)"
 plt.plot(fpr3,tpr3, color="red",lw=lw, linestyle="-.", label="SVM (area = %0.4f)" % roc_auc3)
 
 plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
 plt.xlabel("False Positive Rate")
 plt.ylabel("True Positive Rate")
 plt.title("ROC curve of classifiers for 5 fold")

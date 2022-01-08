@@ -11,3 +11,4 @@ scipy==1.5.3
 six==1.15.0
 threadpoolctl==2.1.0
 wincertstore==0.2
+matplotlib
